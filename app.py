@@ -1,5 +1,5 @@
 
-from flask import Flask, request, send_file, jsonify, abort
+from flask import Flask, request, send_file, jsonify, abort, render_template
 from flask_cors import CORS, cross_origin
 
 
@@ -165,6 +165,28 @@ def crear_jugador():
             }
     jugadores.append(jugador)
     return jsonify({"success": True, "jugador": jugador})
+
+@app.route("/jugador/edit")
+def edit_jugador():
+    return render_template("edit.html")
+
+@app.route("/jugadores/<id>", methods=["PUT"])
+def actualizar_jugador(id):
+    data=request.get_json()
+    jugador= get_character_by_id(id)
+    if jugador:
+        jugador.update({
+    "nombre": data.get("nombre"),
+    "edad": data.get("edad"),
+    "nacion": data.get("nacion"),
+    "posicion": data.get("posicion"),
+    "equipo": data.get("equipo"),
+    "imagen": data.get("imagen")
+        })
+        return jsonify({"success": True, "jugador": jugador})
+    else:
+        return jsonify({"success" : False }), 404
+
 
 
 
