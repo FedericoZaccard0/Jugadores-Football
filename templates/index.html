@@ -13,6 +13,7 @@
     </style>
 
 
+    <link rel="icon" type="image/png" href="futbol-americano.png">
 </head>
 
 <body data-bs-theme="dark">
@@ -22,7 +23,7 @@
                 <h1>
                     Jugadores!
                 </h1>
-                <a href="/nuevojugador.html" class="btn btn-success"> Crear nuevo Jugador</a>
+                <a href="http://localhost:8000/nuevojugador.html" class="btn btn-success"> Crear nuevo Jugador</a>
             </div>
         </div>
     </div>
@@ -58,7 +59,7 @@
 
                 const card = document.createElement("a");
                 card.setAttribute("class", "card text-decoration-none")
-                card.setAttribute("href", `/jugador.html?id=${content[jugador_listado].id}`);
+                card.setAttribute("href", `jugador.html?id=${content[jugador_listado].id}`);
 
                 const image= document.createElement("img");
                 image.setAttribute("class","card-img-top");

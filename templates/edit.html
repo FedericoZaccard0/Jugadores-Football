@@ -16,6 +16,7 @@
     </style>
 
 
+    <link rel="icon" type="image/png" href="futbol-americano.png">
 </head>
 
 <body data-bs-theme="dark">
@@ -35,8 +36,8 @@
                                 <input type="number" class="form-control" id="edad" name="edad" placeholder="99" required>
                             </div>
                             <div class="mb-3">
-                                <label for="nacion" class="form-label">Nación</label>
-                                <input type="text" class="form-control" id="nacion" name="nacion" placeholder="Argentina" required>
+                                <label for="nacionalidad" class="form-label">Nación</label>
+                                <input type="text" class="form-control" id="nacionalidad" name="nacionalidad" placeholder="Argentina" required>
                             </div>
                            <label> Posición: </label> <br>
                             <div class="form-check form-check-inline">
@@ -87,13 +88,13 @@
         function handle_get_response() {
             document.getElementById("nombre").value= data.nombre;
             document.getElementById("edad").value= data.edad;
-            document.getElementById("nacion").value= data.nacion;
+            document.getElementById("nacionalidad").value= data.nacionalidad;
             document.getElementById("posicion-" + data.posicion).checked= True;
             document.getElementById("equipo").value= data.equipo;
             document.getElementById("imagen").value= data.imagen;
         }
       
-        fetch(`http://127.0.0.1:5000/jugadores/${id}`)
+        fetch(`http://127.0.0.1:5000/jugador/${id}`)
             .then((response) => response.json())
             .then(handle_get_response)
             .catch((error) => console.log("ERROR",error));
@@ -114,12 +115,12 @@
 
             const nombre= formData.get("nombre");
             const edad= formData.get("edad");
-            const nacion= formData.get("nacion");
+            const nacionalidad= formData.get("nacionalidad");
             const posicion= formData.get("posicion");
             const equipo= formData.get("equipo");
             const imagen= formData.get("imagen");
 
-            fetch(`http://127.0.0.1:5000/jugadores/${id}`, {
+            fetch(`http://127.0.0.1:5000/jugador/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"},
@@ -127,7 +128,7 @@
                 body: JSON.stringify ({
                     nombre: nombre,
                     edad: edad,
-                    nacion: nacion,
+                    nacionalidad: nacionalidad,
                     posicion: posicion,
                     equipo: equipo,
                     imagen: imagen
