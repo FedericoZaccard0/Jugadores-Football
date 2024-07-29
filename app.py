@@ -1,198 +1,190 @@
-
-from flask import Flask, request, send_file, jsonify, abort, render_template
+from flask import Flask, jsonify, request, send_from_directory
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import SQLAlchemyError
 from flask_cors import CORS, cross_origin
-
 
 
 app = Flask(__name__)
 CORS(app,resources={r"/*":{"origins":"http://localhost:8000"}})
-
-jugadores= [
-        {
-            "nombre": "Lionel Messi",
-            "id": " 1",
-            "edad": "36",
-            "equipo": "Inter Miami CF",
-            "posicion": "Delantero",
-            "nacionalidad": "Argentina",
-            "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg"
-        },
-        {
-            "nombre": "Cristiano Ronaldo",
-            "id": " 2",
-            "edad": "39",
-            "equipo": "Al-Nassr",
-            "posicion": "Delantero",
-            "nacionalidad": "Portugal",
-            "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Cristiano_Ronaldo_playing_for_Al_Nassr_FC_against_Persepolis%2C_September_2023_%28cropped%29.jpg/220px-Cristiano_Ronaldo_playing_for_Al_Nassr_FC_against_Persepolis%2C_September_2023_%28cropped%29.jpg"
-        },
-        {
-            "nombre": "Neymar Jr.",
-            "id": " 3",
-            "edad": "32",
-            "equipo": "Al-Hilal",
-            "posicion": "Delantero",
-            "nacionalidad": "Brasil",
-            "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Bra-Cos_%281%29_%28cropped%29.jpg/225px-Bra-Cos_%281%29_%28cropped%29.jpg"
-        },
-        {
-            "nombre": "Kevin De Bruyne",
-            "id": " 4",
-            "edad": "32",
-            "equipo": "Manchester City",
-            "posicion": "Centrocampista",
-            "nacionalidad": "Bélgica",
-            "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/2021-12-07_Fu%C3%9Fball%2C_M%C3%A4nner%2C_UEFA_Champions_League%2C_RB_Leipzig_-_Manchester_City_FC_1DX_2782_by_Stepro_%28cropped%29.jpg/220px-2021-12-07_Fu%C3%9Fball%2C_M%C3%A4nner%2C_UEFA_Champions_League%2C_RB_Leipzig_-_Manchester_City_FC_1DX_2782_by_Stepro_%28cropped%29.jpg"
-        },
-        {
-            "nombre": "Kylian Mbappé",
-            "id": " 5",
-            "edad": "25",
-            "equipo": "Paris Saint-Germain",
-            "posicion": "Delantero",
-            "nacionalidad": "Francia",
-            "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/2022_FIFA_World_Cup_France_4%E2%80%931_Australia_-_%287%29_%28cropped%29.jpg/220px-2022_FIFA_World_Cup_France_4%E2%80%931_Australia_-_%287%29_%28cropped%29.jpg"
-        },
-        {
-            "nombre": "Robert Lewandowski",
-            "id": " 6",
-            "edad": "35",
-            "equipo": "Barcelona",
-            "posicion": "Delantero",
-            "nacionalidad": "Polonia",
-            "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/2019147195017_2019-05-27_Fussball_1.FC_Kaiserslautern_vs_FC_Bayern_M%C3%BCnchen_-_Sven_-_1D_X_MK_II_-_2036_-_B70I0336.jpg/200px-2019147195017_2019-05-27_Fussball_1.FC_Kaiserslautern_vs_FC_Bayern_M%C3%BCnchen_-_Sven_-_1D_X_MK_II_-_2036_-_B70I0336.jpg"
-        },
-        {
-            "nombre": "Mohamed Salah",
-            "id": " 7",
-            "edad": "32",
-            "equipo": "Liverpool",
-            "posicion": "Delantero",
-            "nacionalidad": "Egipto",
-            "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Mohamed_Salah_2021_CAN_Final.jpg/250px-Mohamed_Salah_2021_CAN_Final.jpg"
-        },
-        {
-            "nombre": "Luka Modrić",
-            "id": " 8",
-            "edad": "38",
-            "equipo": "Real Madrid",
-            "posicion": "Centrocampista",
-            "nacionalidad": "Croacia",
-            "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Shahter-Reak_M_2015_%2810%29.jpg/170px-Shahter-Reak_M_2015_%2810%29.jpg"
-        },
-        {
-            "nombre": "Virgil van Dijk",
-            "id": " 9",
-            "edad": "32",
-            "equipo": "Liverpool",
-            "posicion": "Defensor",
-            "nacionalidad": "Países Bajos",
-            "imagen": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Virgil_van_Dijk_2015.jpg/170px-Virgil_van_Dijk_2015.jpg"
-        },
-        {
-            "nombre": "Erling Haaland",
-            "id": " 10",
-            "edad": "23",
-            "equipo": "Manchester City",
-            "posicion": "Delantero",
-            "nacionalidad": "Noruega",
-            "imagen": "https://media.discordapp.net/attachments/1220137698904248420/1266252332786778143/170px-Erling_Haaland_2020.png?ex=66a478e1&is=66a32761&hm=474dfadc1fb3e28bbad551a552e70c8452adae7c0fcd6898b64c23d312211116&=&format=webp&quality=lossless"
-        },
-    ]
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:15sigo21@localhost:5432/mi_base_de_datos'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
 
+class Jugador (db.Model):
+    __tablename__ = "jugadores"
+    id = db.Column(db.Integer, primary_key=True, autoincrement= True)    
+    nombre = db.Column(db.String(50), nullable=False)
+    edad = db.Column(db.Integer, nullable=False)
+    equipo = db.Column(db.String(50), nullable=False)
+    posicion = db.Column(db.String(50), nullable=False)
+    nacionalidad = db.Column(db.String(50), nullable=False)
+    imagen = db.Column(db.String(200), nullable=False)
 
-@app.route("/jugadores/<id>")
-@cross_origin()
+class Mundial (db.Model):
+    __tablename__ = "mundiales"
+    id = db.Column(db.Integer, primary_key=True)
+    año = db.Column(db.Integer, nullable=False)
+    sede = db.Column(db.String(50), nullable=False)
+    pais_campeon = db.Column(db.String(50), nullable=False) 
+
+
+def contar_mundiales_por_nacionalidad(jugador_id):
+    jugador = Jugador.query.get(jugador_id)
+    if jugador is None:
+        return f"Jugador con ID {jugador_id} no encontrado, podés generarlo si querés..."
+    nacionalidad = jugador.nacionalidad
+    conteo_mundiales = Mundial.query.filter_by(pais_campeon=nacionalidad).count()
+    return conteo_mundiales
+
+if __name__ == '__main__':
+    with app.app_context():
+        jugador_id = 1  
+        print(contar_mundiales_por_nacionalidad(jugador_id))
+
+
+@app.route("/", methods=["GET"])
+def hola():
+    return send_from_directory('templates', 'index.html')
+
+@app.route("/jugadores/<int:id>", methods=["GET"])
 def get_jugador(id):
-    # Buscar el jugador por ID
+    jugador = Jugador.query.get(id)
+    if jugador is None:
+        return jsonify({"error": f"Jugador con ID {id} no encontrado."}), 404
+
+    jugador_info = {
+        "id": jugador.id,
+        "nombre": jugador.nombre,
+        "edad": jugador.edad,
+        "equipo": jugador.equipo,
+        "posicion": jugador.posicion,
+        "nacionalidad": jugador.nacionalidad,
+        "imagen": jugador.imagen,
+        "mundiales_ganados": contar_mundiales_por_nacionalidad(jugador.id)
+    }
+
+    return jsonify(jugador_info)
+
+@app.route("/jugadores", methods=["GET"])
+def todos_los_jugadores():
+    jugadores = Jugador.query.all()
+    jugadores_info = []
     for jugador in jugadores:
-        if jugador["id"].strip() == id.strip():
-            return jsonify(jugador)
-    # Si no se encuentra, devolver un error 404
-    return jsonify({"error": "Jugador no encontrado"}), 404
-
-
-def get_character_by_id(id):
-    for jugador in jugadores:                      
-        if jugador["id"] == str(id):
-            return jugador
-
-
-@app.route("/jugadores")
-@cross_origin()
-def home():
-    return jsonify(jugadores)
-
-def remove_character(id):
-    global jugadores
-    jugadores = [jugador for jugador in jugadores if jugador["id"] != id]
-
-
-@app.route("/jugadores/<id>", methods = ["DELETE"])
-@cross_origin()
-def remover_jugador_por_id(id):
-    if get_character_by_id(id) is None:
-        return {"success": False }
-    remove_character(id)
-    return {"success": True}
-
-
-ultimo_id=int(max(jugador["id"] for jugador in jugadores)) if jugadores else 0
-ultimo_id=ultimo_id +1
-@app.route("/nuevojugador", methods= ["POST"])
-def crear_jugador():
-    global ultimo_id
-    global jugadores
-    
-    data = request.get_json()
-    nombre = data.get("nombre")
-    edad = data.get("edad")
-    nacion = data.get("nacion")
-    posicion = data.get("posicion")
-    equipo = data.get("equipo")
-    imagen = data.get("imagen")
-    ultimo_id+=1
-    nuevo_id= int(ultimo_id)
-
-    jugador= { "nombre": nombre,
-            "id":  f" {nuevo_id}",
-            "edad": edad,
-            "equipo": equipo,
-            "posicion": posicion,
-            "nacionalidad": nacion,
-            "imagen": imagen,
-            }
-    jugadores.append(jugador)
-    return jsonify({"success": True, "jugador": jugador})
-
-@app.route("/jugador/edit")
-def edit_jugador():
-    return render_template("edit.html")
-
-@app.route("/jugadores/<id>", methods=["PUT"])
-def actualizar_jugador(id):
-    data=request.get_json()
-    jugador= get_character_by_id(id)
-    if jugador:
-        jugador.update({
-    "nombre": data.get("nombre"),
-    "edad": data.get("edad"),
-    "nacion": data.get("nacion"),
-    "posicion": data.get("posicion"),
-    "equipo": data.get("equipo"),
-    "imagen": data.get("imagen")
+        jugadores_info.append({
+            "id": jugador.id,
+            "nombre": jugador.nombre,
+            "edad": jugador.edad,
+            "equipo": jugador.equipo,
+            "posicion": jugador.posicion,
+            "nacionalidad": jugador.nacionalidad,
+            "imagen": jugador.imagen
         })
-        return jsonify({"success": True, "jugador": jugador})
-    else:
-        return jsonify({"success" : False }), 404
+    return jsonify(jugadores_info)
+
+@app.route("/mundiales", methods=["GET"])
+def get_mundiales():
+    mundiales = Mundial.query.all()
+    mundiales_info = []
+    for mundial in mundiales:
+        mundiales_info.append({
+            "id": mundial.id,
+            "año": mundial.año,
+            "sede": mundial.sede,
+            "pais_campeon": mundial.pais_campeon
+        })
+    return jsonify(mundiales_info)
 
 
 
+@app.route("/nuevojugador", methods=["POST"])
+def nuevo_jugador():
+    try:
+        data = request.json
+        print(f"Datos recibidos: {data}")
+
+        nuevo_nombre = data.get('nombre')
+        nueva_edad = data.get('edad')
+        nueva_nacionalidad = data.get('nacionalidad')
+        nueva_posicion = data.get('posicion')
+        nuevo_equipo = data.get('equipo')
+        nueva_imagen = data.get('imagen')
+
+        if not all([nuevo_nombre, nueva_edad, nueva_nacionalidad, nueva_posicion, nuevo_equipo, nueva_imagen]):
+            return jsonify({'mensaje': 'Todos los campos son obligatorios'}), 400
+
+        nuevo_jugador = Jugador(
+            nombre=nuevo_nombre, 
+            edad=nueva_edad, 
+            nacionalidad=nueva_nacionalidad, 
+            posicion=nueva_posicion, 
+            equipo=nuevo_equipo, 
+            imagen=nueva_imagen
+        )
+        db.session.add(nuevo_jugador)
+        db.session.commit()
+        return jsonify({'jugador': {
+            'id': nuevo_jugador.id, 
+            'nombre': nuevo_jugador.nombre, 
+            'edad': nuevo_jugador.edad, 
+            'nacionalidad': nuevo_jugador.nacionalidad, 
+            'posicion': nuevo_jugador.posicion, 
+            'equipo': nuevo_jugador.equipo, 
+            'imagen': nuevo_jugador.imagen
+        }}), 201
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        print(f"Error: {str(e)}")
+        return jsonify({'mensaje': 'No se pudo crear el nuevo jugador', 'error': str(e)}), 500
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
+@app.route("/jugadores/<int:id>", methods=["DELETE"])
+def eliminar_jugador(id):
+    try:
+        jugador = Jugador.query.get(id)
+        if jugador is None:
+            return jsonify({"success": False, "error": f"Jugador con ID {id} no encontrado."}), 404
+        
+        db.session.delete(jugador)
+        db.session.commit()
+        return jsonify({"success": True, "mensaje": f"Jugador con ID {id} eliminado con éxito."}), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"success": False, "mensaje": "No se pudo eliminar el jugador", "error": str(e)}), 500
 
 
+@app.route("/jugador/<int:id>", methods=["PUT"])
+def actualizar_jugador(id):
+    try:
+        jugador = Jugador.query.get(id)
+        if jugador is None:
+            return jsonify({"error": f"Jugador con ID {id} no encontrado."}), 404
 
+        data = request.json
+        jugador.nombre = data.get('nombre', jugador.nombre)
+        jugador.edad = data.get('edad', jugador.edad)
+        jugador.nacionalidad = data.get('nacionalidad', jugador.nacionalidad)
+        jugador.posicion = data.get('posicion', jugador.posicion)
+        jugador.equipo = data.get('equipo', jugador.equipo)
+        jugador.imagen = data.get('imagen', jugador.imagen)
+
+        db.session.commit()
+
+        return jsonify({"success": True, 'jugador': {
+            'id': jugador.id,
+            'nombre': jugador.nombre,
+            'edad': jugador.edad,
+            'nacionalidad': jugador.nacionalidad,
+            'posicion': jugador.posicion,
+            'equipo': jugador.equipo,
+            'imagen': jugador.imagen
+        }}), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({'mensaje': 'No se pudo actualizar el jugador', 'error': str(e)}), 500
+
+if __name__== '__main__':
+    with app.app_context():
+       db.create_all()
+    app.run
