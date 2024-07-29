@@ -26,14 +26,11 @@ class Mundial (db.Model):
     id = db.Column(db.Integer, primary_key=True)
     año = db.Column(db.Integer, nullable=False)
     sede = db.Column(db.String(50), nullable=False)
-    pais_campeon = db.Column(db.String(50), nullable=False) 
+    pais_campeon = db.Column(db.String(50), nullable=False)
+    foto_url = db.Column(db.String(255), nullable=True)
 
 
-def contar_mundiales_por_nacionalidad(jugador_id):
-    jugador = Jugador.query.get(jugador_id)
-    if jugador is None:
-        return f"Jugador con ID {jugador_id} no encontrado, podés generarlo si querés..."
-    nacionalidad = jugador.nacionalidad
+def contar_mundiales_por_nacionalidad(nacionalidad):
     conteo_mundiales = Mundial.query.filter_by(pais_campeon=nacionalidad).count()
     return conteo_mundiales
 
@@ -61,7 +58,7 @@ def get_jugador(id):
         "posicion": jugador.posicion,
         "nacionalidad": jugador.nacionalidad,
         "imagen": jugador.imagen,
-        "mundiales_ganados": contar_mundiales_por_nacionalidad(jugador.id)
+        "mundiales_ganados": contar_mundiales_por_nacionalidad(jugador.nacionalidad) #
     }
 
     return jsonify(jugador_info)
@@ -78,7 +75,8 @@ def todos_los_jugadores():
             "equipo": jugador.equipo,
             "posicion": jugador.posicion,
             "nacionalidad": jugador.nacionalidad,
-            "imagen": jugador.imagen
+            "imagen": jugador.imagen,
+            "mundiales_ganados": contar_mundiales_por_nacionalidad(jugador.nacionalidad) #
         })
     return jsonify(jugadores_info)
 
@@ -91,7 +89,9 @@ def get_mundiales():
             "id": mundial.id,
             "año": mundial.año,
             "sede": mundial.sede,
-            "pais_campeon": mundial.pais_campeon
+            "pais_campeon": mundial.pais_campeon,
+            "foto_url": mundial.foto_url
+
         })
     return jsonify(mundiales_info)
 
