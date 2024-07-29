@@ -1,0 +1,168 @@
+
+body {
+    background: url('fondo_pizarra.jpeg') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+
+img {
+    background-color: black;
+    aspect-ratio: 2/3;
+}
+
+
+.header,
+.footer {
+    background-color: #000000;
+    color: #fff;
+    padding: 20px 0;
+}
+
+
+.header {
+    margin-bottom: 25px;
+}
+
+
+.footer {
+    margin-top: auto;
+    text-align: center;
+}
+
+
+.header h1 {
+    margin: 0;
+    font-size: 2rem;
+    text-align: center;
+    color:rgb(205, 247, 150)
+}
+
+
+.header .nav-link {
+    color: #6dd43d;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+
+.header .nav-link:hover {
+    color: #1ccc71d5 !important; 
+}
+
+.footer a {
+    color: #fff;
+    margin: 0 15px;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: #1ccc71d5;
+}
+
+.social-icons i {
+    margin: 0 10px;
+    font-size: 24px;
+}
+
+
+.about-us {
+    padding: 50px 0;
+}
+
+.about-us-content {
+    color: #fff; 
+}
+
+.about-box {
+    background-color: rgba(34, 34, 34, 0.813); 
+    border-radius: 8px; 
+    padding: 20px; 
+    margin-bottom: 20px; 
+    line-height: 1.6; 
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 0px;
+    color: #ff9d14
+}
+
+.copas {
+    margin-top: 500px; 
+    color: yellow;
+}
+
+.about-us p, .about-us ul {
+    margin-bottom: 20px;
+}
+
+.signature {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    color: #6dd43d;
+    font-size: 20px;
+   }
+
+.welcome-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.welcome-container h2 {
+    margin-bottom: 20px;
+}
+
+
+.button-container {
+    padding: 40px 40px;
+    font-size: 1.2rem;
+    margin: 10px 0;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+
+}
+
+
+@media (max-width: 576px) {
+    .header .nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header .nav-link {
+        margin: 5px 0;
+    }
+
+    .footer a {
+        margin: 0 10px;
+        font-size: 18px;
+    }
+
+    .social-icons i {
+        margin: 0 5px;
+        font-size: 20px;
+    }
+
+    .signature {
+        
+        font-size: 12px;
+        bottom: 5px;
+        right: 5px;
+    }
+    
+    .button-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
